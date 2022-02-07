@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace AzureBlobProject.Services
 {
@@ -11,9 +12,13 @@ namespace AzureBlobProject.Services
             _blobClient = blobClient ?? throw new ArgumentNullException(nameof(blobClient));
         }
 
-        public Task<bool> DownloadBlob(string name, string containerName)
+        public async Task<bool> DeleteBlob(string name, string containerName)
         {
-            throw new NotImplementedException();
+            BlobContainerClient blobContainerClient = _blobClient.GetBlobContainerClient(containerName);
+
+            var blobClient = blobContainerClient.GetBlobClient(name);
+
+            return await blobClient.DeleteIfExistsAsync();
         }
 
         public async Task<List<string>> GetAllBlobs(string containerName)
@@ -29,14 +34,30 @@ namespace AzureBlobProject.Services
             return blobString;
         }
 
-        public Task<string> GetBlob(string name, string containerName)
+        public async Task<string> GetBlob(string name, string containerName)
         {
-            throw new NotImplementedException();
+            BlobContainerClient blobContainerClient = _blobClient.GetBlobContainerClient(containerName);
+            var blobClient = blobContainerClient.GetBlobClient(name);
+            return blobClient.Uri.AbsoluteUri;
         }
 
-        public Task<bool> UploadBlob(string name, IFormFile file, string containerName)
+        public async Task<bool> UploadBlob(string name, IFormFile file, string containerName)
         {
-            throw new NotImplementedException();
+            BlobContainerClient blobContainerClient = _blobClient.GetBlobContainerClient(containerName);
+            
+            var blobClient = blobContainerClient.GetBlobClient(name);
+
+            var httpHeaders = new BlobHttpHeaders()
+            {
+                ContentType = file.ContentType
+            };
+            var result = await blobClient.UploadAsync(file.OpenReadStream(), httpHeaders);
+
+            if (result != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
