@@ -43,26 +43,42 @@ namespace AzureBlobProject.Services
             var blobs = blobContainerClient.GetBlobsAsync();
 
             var blobList = new List<Blob>();
+            string sasContainerSignature = "";
+
+            if (blobContainerClient.CanGenerateSasUri)
+            {
+                BlobSasBuilder sasBuilder = new()
+                {
+                    BlobContainerName = blobContainerClient.Name,
+                    Resource = "c",
+                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
+                };
+                sasBuilder.SetPermissions(BlobAccountSasPermissions.Read);
+                sasContainerSignature = blobContainerClient.GenerateSasUri(sasBuilder).AbsoluteUri.Split('?')[1].ToString();
+            }
+
+
             await foreach (var item in blobs)
             {
                 var blobClient = blobContainerClient.GetBlobClient(item.Name);
                 Blob blobIndividal = new()
                 {
-                    Uri = blobClient.Uri.AbsoluteUri
+                    //Uri = blobClient.Uri.AbsoluteUri
+                    Uri = blobClient.Uri.AbsoluteUri + "?" + sasContainerSignature
                 };
 
-                if(blobClient.CanGenerateSasUri)
-                {
-                    BlobSasBuilder sasBuilder = new()
-                    {
-                        BlobContainerName = blobClient.GetParentBlobContainerClient().Name,
-                        BlobName = blobClient.Name,
-                        Resource = "b",
-                        ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
-                    };
-                    sasBuilder.SetPermissions(BlobAccountSasPermissions.Read);
-                    blobIndividal.Uri = blobClient.GenerateSasUri(sasBuilder).AbsoluteUri;
-                }
+                //if(blobClient.CanGenerateSasUri)
+                //{
+                //    BlobSasBuilder sasBuilder = new()
+                //    {
+                //        BlobContainerName = blobClient.GetParentBlobContainerClient().Name,
+                //        BlobName = blobClient.Name,
+                //        Resource = "b",
+                //        ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
+                //    };
+                //    sasBuilder.SetPermissions(BlobAccountSasPermissions.Read);
+                //    blobIndividal.Uri = blobClient.GenerateSasUri(sasBuilder).AbsoluteUri;
+                //}
 
                 BlobProperties properties = await blobClient.GetPropertiesAsync();
                 if(properties.Metadata.ContainsKey("title"))
