@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
+
 namespace AzureFunctionsTabgyWeb.Controllers
 {
     public class HomeController : Controller
