@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureBlobProject", "AzureBl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctionsTabgyWeb", "AzureFunctionsTabgyWeb\AzureFunctionsTabgyWeb.csproj", "{625083A6-9D43-4A06-B071-72B1D3056E05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureTangyFunc", "AzureTangyFunc\AzureTangyFunc.csproj", "{9A907EED-1CBC-4993-A836-4F821DD27534}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureTangyFunc", "AzureTangyFunc\AzureTangyFunc.csproj", "{9A907EED-1CBC-4993-A836-4F821DD27534}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
